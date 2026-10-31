@@ -27,9 +27,15 @@ function availabilityStatus(plan: Plan): { label: string; tone: 'green' | 'amber
 export function PlansClient({ isAdmin }: { isAdmin: boolean }) {
   const [page, setPage] = useState(1);
   const [q, setQ] = useState('');
+  const [showArchived, setShowArchived] = useState(false);
   const handleSearch = useCallback((v: string) => { setQ(v); setPage(1); }, []);
 
-  const { data, isLoading } = useApiList<Plan>('/plans', { page, page_size: 20, q: q || undefined });
+  const { data, isLoading } = useApiList<Plan>('/plans', {
+    page,
+    page_size: 20,
+    q: q || undefined,
+    active: showArchived ? 'all' : 'true',
+  });
 
   const columns: Column<Plan>[] = [
     { key: 'name', header: 'Name', cell: (r) => <span className="font-medium text-slate-900">{r.name}</span> },
@@ -54,6 +60,10 @@ export function PlansClient({ isAdmin }: { isAdmin: boolean }) {
         </div>
       ),
     },
+    {
+      key: 'status', header: 'Status',
+      cell: (r) => <Badge tone={r.is_active ? 'green' : 'gray'}>{r.is_active ? 'Active' : 'Archived'}</Badge>,
+    },
   ];
 
   return (
@@ -63,8 +73,12 @@ export function PlansClient({ isAdmin }: { isAdmin: boolean }) {
         description="Subscription plans with pricing and lifecycle settings."
         actions={isAdmin ? <ButtonLink href="/app/plans/new" variant="primary">+ New plan</ButtonLink> : undefined}
       />
-      <div className="mb-4">
+      <div className="mb-4 flex flex-wrap items-center gap-3">
         <SearchInput onSearch={handleSearch} placeholder="Search plans…" />
+        <label className="flex cursor-pointer items-center gap-1.5 text-sm text-slate-600">
+          <input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} />
+          Show archived
+        </label>
       </div>
       <div className="rounded-lg border border-slate-200 bg-white">
         {data?.data?.length === 0 && !isLoading ? (

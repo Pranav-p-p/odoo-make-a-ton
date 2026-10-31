@@ -1,17 +1,36 @@
 import { route } from '@/lib/api/handler';
 import { unwrap } from '@/lib/api/errors';
-import { templateSchema } from '@/lib/validation/s1';
+import { z } from 'zod';
+import { name, optionalText, uuid } from '@/lib/validation/common';
+
+const templatePatchSchema = z.object({
+  name: name.optional(),
+  plan_id: uuid.optional(),
+  validity_days: z.coerce.number().int().min(1).max(365).optional(),
+  notes: optionalText,
+  is_active: z.boolean().optional(),
+  lines: z
+    .array(
+      z.object({
+        product_id: uuid,
+        variant_id: uuid.nullable().optional(),
+        quantity: z.coerce.number().positive(),
+      }),
+    )
+    .min(1, 'at least one product line is required')
+    .optional(),
+});
 
 export const GET = route({ access: ['admin', 'staff'] }, async ({ params, supabase }) => {
   const res = await supabase
     .from('quote_templates')
-    .select('*, lines:quote_template_lines(*, product:products(id,name,sales_price), variant:product_variants(id,attribute,value,extra_price))')
+    .select('*, plan:plans(id,name,price,billing_period), lines:quote_template_lines(*, product:products(id,name,sales_price), variant:product_variants(id,attribute,value,extra_price))')
     .eq('id', params.id)
     .single();
   return unwrap<object>(res, 'Template');
 });
 
-export const PATCH = route({ access: ['admin'], body: templateSchema.partial() }, async ({ body, params, supabase }) => {
+export const PATCH = route({ access: ['admin'], body: templatePatchSchema }, async ({ body, params, supabase }) => {
   const { lines, ...headerData } = body;
 
   // Update header

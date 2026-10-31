@@ -1,24 +1,32 @@
 import { created, route } from '@/lib/api/handler';
 import { unwrap } from '@/lib/api/errors';
-import { templateSchema } from '@/lib/validation/s1';
+import { activeFilter, templateSchema } from '@/lib/validation/s1';
 import { pageQuery } from '@/lib/validation/common';
 import type { z } from 'zod';
 
-type PageQ = z.infer<typeof pageQuery>;
+const templateQuery = pageQuery.extend({ active: activeFilter });
+type TemplateQ = z.infer<typeof templateQuery>;
 
-export const GET = route<undefined, PageQ>({ access: ['admin', 'staff'], query: pageQuery }, async ({ query, supabase }) => {
-  const { page, page_size, q } = query;
+export const GET = route<undefined, TemplateQ>({ access: ['admin', 'staff'], query: templateQuery }, async ({ query, supabase }) => {
+  const { page, page_size, q, active } = query;
   const from = (page - 1) * page_size;
   const to = from + page_size - 1;
 
   let qb = supabase
     .from('quote_templates')
-    .select('*, lines:quote_template_lines(*, product:products(id,name,sales_price), variant:product_variants(id,attribute,value,extra_price))', { count: 'exact' })
-    .eq('is_active', true)
+    .select('*, plan:plans(id,name), lines:quote_template_lines(*, product:products(id,name,sales_price), variant:product_variants(id,attribute,value,extra_price))', { count: 'exact' })
     .order('name')
     .range(from, to);
 
   if (q) qb = qb.ilike('name', `%${q}%`);
+  if (active === false) {
+    qb = qb.eq('is_active', false);
+  } else if (active === 'all') {
+    // Show all
+  } else {
+    // Default: active only
+    qb = qb.eq('is_active', true);
+  }
 
   const res = await qb;
   if (res.error) throw unwrap(res);

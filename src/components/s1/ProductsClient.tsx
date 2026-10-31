@@ -31,7 +31,7 @@ export default function ProductsClient({ isAdmin }: { isAdmin: boolean }) {
     page_size: 20,
     q: q || undefined,
     type: typeFilter !== 'all' ? typeFilter : undefined,
-    active: showArchived ? undefined : true,
+    active: showArchived ? 'all' : 'true',
   });
 
   const columns: Column<Product>[] = [
