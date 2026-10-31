@@ -74,6 +74,10 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
   }
 
   const { subscription, customer, plan, payment_term, lines, allowed_actions, history, invoices } = data;
+  // sub_allowed_actions returns 'edit' in Draft/Quotation (header and lines) and 'edit_lines' in Active (D-13);
+  // closing is 'closed' for a Draft/Quotation/Confirmed discard and 'close' for an Active subscription.
+  const canEditLines = allowed_actions.includes('edit') || allowed_actions.includes('edit_lines');
+  const canClose = allowed_actions.includes('close') || allowed_actions.includes('closed');
 
   const handleAction = async (fn: () => Promise<unknown>) => {
     setActionLoading(true);
@@ -243,7 +247,7 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
               </Button>
             )}
 
-            {allowed_actions.includes('edit_lines') && (
+            {canEditLines && (
               <Button variant="secondary" size="sm" onClick={() => setLinesOpen(true)}>
                 Edit lines
               </Button>
@@ -318,7 +322,7 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
               </Button>
             )}
 
-            {allowed_actions.includes('close') && (
+            {canClose && (
               <Button
                 variant="danger"
                 size="sm"
@@ -383,7 +387,7 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
           title="Product lines &amp; pricing"
           description="Plan fees and product seats snapshotted for recurring invoicing."
           actions={
-            allowed_actions.includes('edit_lines') && (
+            canEditLines && (
               <Button variant="secondary" size="sm" onClick={() => setLinesOpen(true)}>
                 Edit lines
               </Button>
@@ -527,7 +531,7 @@ export default function SubscriptionDetailPage({ params }: { params: Promise<{ i
               Cancel
             </Button>
             <Button variant="danger" onClick={handleClose} disabled={actionLoading}>
-              {actionLoading ? 'Closing...' : 'Close subscription'}
+              {actionLoading ? 'Closing...' : subscription.status === 'active' ? 'Close subscription' : 'Discard subscription'}
             </Button>
           </>
         }
