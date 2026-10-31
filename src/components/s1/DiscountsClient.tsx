@@ -28,9 +28,15 @@ function DiscountStatusBadge({ rule }: { rule: DiscountRule }) {
 export function DiscountsClient({ isAdmin }: { isAdmin: boolean }) {
   const [page, setPage] = useState(1);
   const [q, setQ] = useState('');
+  const [showArchived, setShowArchived] = useState(false);
   const handleSearch = useCallback((v: string) => { setQ(v); setPage(1); }, []);
 
-  const { data, isLoading } = useApiList<DiscountRule>('/discount-rules', { page, page_size: 20, q: q || undefined });
+  const { data, isLoading } = useApiList<DiscountRule>('/discount-rules', {
+    page,
+    page_size: 20,
+    q: q || undefined,
+    active: showArchived ? 'all' : 'true',
+  });
 
   const columns: Column<DiscountRule>[] = [
     { key: 'name', header: 'Name', cell: (r) => <span className="font-medium text-slate-900">{r.name}</span> },
@@ -66,8 +72,12 @@ export function DiscountsClient({ isAdmin }: { isAdmin: boolean }) {
         description="Automatic discounts applied during invoice generation."
         actions={isAdmin ? <ButtonLink href="/app/discounts/new" variant="primary">+ New rule</ButtonLink> : undefined}
       />
-      <div className="mb-4">
+      <div className="mb-4 flex flex-wrap items-center gap-3">
         <SearchInput onSearch={handleSearch} placeholder="Search rules…" />
+        <label className="flex cursor-pointer items-center gap-1.5 text-sm text-slate-600">
+          <input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} />
+          Show archived
+        </label>
       </div>
       <div className="rounded-lg border border-slate-200 bg-white">
         {data?.data?.length === 0 && !isLoading ? (

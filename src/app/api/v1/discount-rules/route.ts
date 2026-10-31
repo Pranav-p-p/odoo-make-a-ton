@@ -1,10 +1,10 @@
 import { created, route } from '@/lib/api/handler';
 import { unwrap } from '@/lib/api/errors';
-import { discountRuleSchema } from '@/lib/validation/s1';
-import { pageQuery, boolString } from '@/lib/validation/common';
+import { activeFilter, discountRuleSchema } from '@/lib/validation/s1';
+import { pageQuery } from '@/lib/validation/common';
 import { z } from 'zod';
 
-const discountQuery = pageQuery.extend({ active: boolString.optional() });
+const discountQuery = pageQuery.extend({ active: activeFilter });
 type DiscountQ = z.infer<typeof discountQuery>;
 
 export const GET = route<undefined, DiscountQ>({ access: ['admin', 'staff'], query: discountQuery }, async ({ query, supabase }) => {
@@ -19,7 +19,14 @@ export const GET = route<undefined, DiscountQ>({ access: ['admin', 'staff'], que
     .range(from, to);
 
   if (q) qb = qb.ilike('name', `%${q}%`);
-  if (active !== undefined) qb = qb.eq('is_active', active);
+  if (active === false) {
+    qb = qb.eq('is_active', false);
+  } else if (active === 'all') {
+    // Show all
+  } else {
+    // Default or active === true: active only
+    qb = qb.eq('is_active', true);
+  }
 
   const res = await qb;
   if (res.error) throw unwrap(res);

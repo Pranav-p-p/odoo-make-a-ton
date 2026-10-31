@@ -1,22 +1,33 @@
 import { created, route } from '@/lib/api/handler';
 import { unwrap } from '@/lib/api/errors';
-import { taxSchema } from '@/lib/validation/s1';
+import { activeFilter, taxSchema } from '@/lib/validation/s1';
 import { pageQuery } from '@/lib/validation/common';
 import type { z } from 'zod';
 
-type PageQ = z.infer<typeof pageQuery>;
+const taxesQuery = pageQuery.extend({ active: activeFilter });
+type TaxesQ = z.infer<typeof taxesQuery>;
 
-export const GET = route<undefined, PageQ>({ access: ['admin', 'staff'], query: pageQuery }, async ({ query, supabase }) => {
-  const { page, page_size } = query;
+export const GET = route<undefined, TaxesQ>({ access: ['admin', 'staff'], query: taxesQuery }, async ({ query, supabase }) => {
+  const { page, page_size, active } = query;
   const from = (page - 1) * page_size;
   const to = from + page_size - 1;
 
-  const res = await supabase
+  let qb = supabase
     .from('taxes')
     .select('*', { count: 'exact' })
     .order('name')
     .range(from, to);
 
+  if (active === false) {
+    qb = qb.eq('is_active', false);
+  } else if (active === 'all') {
+    // Return all
+  } else {
+    // Default to active only
+    qb = qb.eq('is_active', true);
+  }
+
+  const res = await qb;
   if (res.error) throw unwrap(res);
   return { data: res.data ?? [], page, page_size, total: res.count ?? 0 };
 });

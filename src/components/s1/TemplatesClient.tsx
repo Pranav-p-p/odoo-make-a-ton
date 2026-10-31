@@ -29,14 +29,25 @@ interface TemplateLine {
 export function TemplatesClient({ isAdmin }: { isAdmin: boolean }) {
   const [page, setPage] = useState(1);
   const [q, setQ] = useState('');
+  const [showArchived, setShowArchived] = useState(false);
   const handleSearch = useCallback((v: string) => { setQ(v); setPage(1); }, []);
 
-  const { data, isLoading } = useApiList<QuoteTemplate>('/quote-templates', { page, page_size: 20, q: q || undefined });
+  const { data, isLoading } = useApiList<QuoteTemplate>('/quote-templates', {
+    page,
+    page_size: 20,
+    q: q || undefined,
+    active: showArchived ? 'all' : 'true',
+  });
 
   const columns: Column<QuoteTemplate>[] = [
     { key: 'name', header: 'Name', cell: (r) => <span className="font-medium text-slate-900">{r.name}</span> },
+    { key: 'plan', header: 'Plan', cell: (r) => <span className="text-slate-700">{(r as { plan?: { name: string } }).plan?.name ?? '—'}</span> },
     { key: 'validity', header: 'Valid for', cell: (r) => <span>{r.validity_days} days</span> },
     { key: 'lines', header: 'Lines', align: 'center', cell: (r) => <Badge tone="gray">{r.lines?.length ?? 0}</Badge> },
+    {
+      key: 'status', header: 'Status',
+      cell: (r) => <Badge tone={r.is_active ? 'green' : 'gray'}>{r.is_active ? 'Active' : 'Archived'}</Badge>,
+    },
   ];
 
   return (
@@ -46,8 +57,12 @@ export function TemplatesClient({ isAdmin }: { isAdmin: boolean }) {
         description="Reusable templates to quickly create subscriptions."
         actions={isAdmin ? <ButtonLink href="/app/templates/new" variant="primary">+ New template</ButtonLink> : undefined}
       />
-      <div className="mb-4">
+      <div className="mb-4 flex flex-wrap items-center gap-3">
         <SearchInput onSearch={handleSearch} placeholder="Search templates…" />
+        <label className="flex cursor-pointer items-center gap-1.5 text-sm text-slate-600">
+          <input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} />
+          Show archived
+        </label>
       </div>
       <div className="rounded-lg border border-slate-200 bg-white">
         {data?.data?.length === 0 && !isLoading ? (

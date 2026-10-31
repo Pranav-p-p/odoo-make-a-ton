@@ -348,11 +348,11 @@ export default function SettingsPage({ isAdmin }: { isAdmin?: boolean }) {
   const [addTermOpen, setAddTermOpen] = useState(false);
 
   const refresh = useRefresh();
-  const { data: taxData, isLoading: taxLoading } = useApiList<Tax>('/taxes', { page_size: 100 });
-  const { data: termData, isLoading: termLoading } = useApiList<PaymentTerm>('/payment-terms', { page_size: 100 });
+  const { data: taxData, isLoading: taxLoading } = useApiList<Tax>('/taxes', { page_size: 100, active: showArchived ? 'all' : 'true' });
+  const { data: termData, isLoading: termLoading } = useApiList<PaymentTerm>('/payment-terms', { page_size: 100, active: showArchived ? 'all' : 'true' });
 
-  const taxes = (taxData?.data ?? []).filter((t) => showArchived || t.is_active);
-  const terms = (termData?.data ?? []).filter((t) => showArchived || t.is_active);
+  const taxes = taxData?.data ?? [];
+  const terms = termData?.data ?? [];
 
   function onTaxSaved() { refresh('/taxes'); }
   function onTermSaved() { refresh('/payment-terms'); }

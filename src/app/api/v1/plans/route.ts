@@ -1,10 +1,10 @@
 import { created, route } from '@/lib/api/handler';
 import { unwrap } from '@/lib/api/errors';
-import { planSchema } from '@/lib/validation/s1';
-import { pageQuery, boolString } from '@/lib/validation/common';
+import { activeFilter, planSchema } from '@/lib/validation/s1';
+import { pageQuery } from '@/lib/validation/common';
 import { z } from 'zod';
 
-const plansQuery = pageQuery.extend({ active: boolString.optional() });
+const plansQuery = pageQuery.extend({ active: activeFilter });
 type PlansQ = z.infer<typeof plansQuery>;
 
 export const GET = route<undefined, PlansQ>({ access: 'any', query: plansQuery }, async ({ query, supabase }) => {
@@ -22,9 +22,10 @@ export const GET = route<undefined, PlansQ>({ access: 'any', query: plansQuery }
   // Default: active only
   if (active === false) {
     qb = qb.eq('is_active', false);
-  } else if (active === true) {
-    qb = qb.eq('is_active', true);
+  } else if (active === 'all') {
+    // Show all
   } else {
+    // Default or active === true: active only
     qb = qb.eq('is_active', true);
   }
 

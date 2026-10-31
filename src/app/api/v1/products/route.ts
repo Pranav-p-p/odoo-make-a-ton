@@ -22,12 +22,11 @@ export const GET = route<undefined, ProductsQ>({ access: 'any', query: productsQ
   if (type) qb = qb.eq('type', type);
   // Active filter: default to active only (omit archived)
   if (active === false) {
-    // show only archived
     qb = qb.eq('is_active', false);
-  } else if (active === true) {
-    qb = qb.eq('is_active', true);
+  } else if (active === 'all') {
+    // Show all (both active and archived)
   } else {
-    // default: active only
+    // Default or active === true: active only
     qb = qb.eq('is_active', true);
   }
 

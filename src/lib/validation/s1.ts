@@ -2,6 +2,14 @@
 import { z } from 'zod';
 import { boolString, isoDate, money, name, optionalText, pageQuery, uuid } from './common';
 
+export const activeFilter = z
+  .union([
+    z.literal('all'),
+    z.enum(['true', 'false']).transform((v) => v === 'true'),
+    z.boolean(),
+  ])
+  .optional();
+
 export const productType = z.enum(['service', 'software', 'addon', 'other']);
 export const billingPeriod = z.enum(['daily', 'weekly', 'monthly', 'yearly']);
 
@@ -19,7 +27,7 @@ export const productSchema = z.object({
   is_active: z.boolean().optional(),
   variants: z.array(variantSchema).optional(),
 });
-export const productsQuery = pageQuery.extend({ type: productType.optional(), active: boolString.optional() });
+export const productsQuery = pageQuery.extend({ type: productType.optional(), active: activeFilter });
 
 export const planSchema = z
   .object({
