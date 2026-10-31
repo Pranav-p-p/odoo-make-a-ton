@@ -98,3 +98,22 @@ src/lib/                     Core: api handler + errors, supabase clients, sessi
 
 ## Out of scope (stated)
 Real payment gateway, proration, refunds and credit notes, multi-currency, dunning, CSV import/export (context.md §7).
+
+
+## Speed proof (NFR-1)
+
+Measured against the seeded database (~5,000 subscriptions, ~22,000 invoices, ~19,000 payments).
+Run `npm run speed-proof` with the dev server at `localhost:3000` to reproduce.
+
+| Endpoint | Target | Notes |
+|---|---|---|
+| Dashboard summary (`/reports/summary`) | < 2 s | KPIs + MRR/ARR from SQL aggregates |
+| Revenue chart (`/reports/revenue`) | < 2 s | Received vs invoiced per month |
+| Overdue buckets (`/reports/overdue`) | < 2 s | Age-grouped aggregates |
+| Overdue list (`/reports/overdue-list`) | < 2 s | Top 10 from `invoice_list` view |
+| Payments list (`/payments`) | < 2 s | Paginated with joins |
+| Invoices list (`/invoices`) | < 2 s | S3 owns — paginated via `invoice_list` |
+| Subscriptions list (`/subscriptions`) | < 2 s | S2 owns — paginated via `subscription_list` |
+| Customers list (`/customers`) | < 2 s | S2 owns — paginated with trigram |
+
+*Actual timings are filled in after the final seed on the demo project. Local Postgres checks (see above) show 4–50 ms per query.*
