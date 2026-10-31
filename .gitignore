@@ -38,3 +38,6 @@ next-env.d.ts
 *.tsbuildinfo
 next-env.d.ts
 
+# Personal implementation trackers
+docs/phase2/S3-tracker.md
+
