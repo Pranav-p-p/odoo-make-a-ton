@@ -2,27 +2,41 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { api } from '@/lib/client/api';
 import type { SessionUser } from '@/lib/types';
-import { Badge, Button, cn } from '@/components/ui';
+import { Badge, cn } from '@/components/ui';
 import { INTERNAL_NAV, PORTAL_NAV, type NavItem } from './nav';
+import { LogoMark, NavIcon } from './icons';
 
 function isActive(path: string, href: string) {
   if (href === '/app' || href === '/portal') return path === href;
   return path === href || path.startsWith(href + '/');
 }
 
+function initials(name: string | null | undefined, email: string) {
+  const src = (name || email).trim();
+  const parts = src.split(/[\s@._-]+/).filter(Boolean);
+  return ((parts[0]?.[0] ?? '') + (parts[1]?.[0] ?? '')).toUpperCase() || '?';
+}
+
 function NavLink({ item, path, onClick }: { item: NavItem; path: string; onClick?: () => void }) {
+  const active = isActive(path, item.href);
   return (
     <Link
       href={item.href}
       onClick={onClick}
+      aria-current={active ? 'page' : undefined}
       className={cn(
-        'block rounded-md px-3 py-2 text-sm font-medium',
-        isActive(path, item.href) ? 'bg-brand-50 text-brand-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900',
+        'group relative flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors',
+        active ? 'bg-white/[0.08] text-white' : 'text-slate-400 hover:bg-white/[0.04] hover:text-slate-100',
       )}
     >
+      {active && <span aria-hidden className="absolute inset-y-1.5 -left-3 w-[3px] rounded-r-full bg-brand-400" />}
+      <NavIcon
+        name={item.icon}
+        className={cn('h-[18px] w-[18px] shrink-0', active ? 'text-brand-300' : 'text-slate-500 group-hover:text-slate-300')}
+      />
       {item.label}
     </Link>
   );
@@ -33,6 +47,15 @@ export function AppShell({ user, area, children }: { user: SessionUser; area: 'a
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [leaving, setLeaving] = useState(false);
+
+  // Close the mobile drawer on navigation and with Escape.
+  useEffect(() => setOpen(false), [path]);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
 
   const logout = async () => {
     setLeaving(true);
@@ -47,18 +70,20 @@ export function AppShell({ user, area, children }: { user: SessionUser; area: 'a
         const items = group.items.filter((i) => i.roles.includes(user.role));
         if (!items.length) return null;
         return (
-          <div key={group.section} className="mb-4">
-            <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">{group.section}</p>
-            {items.map((i) => (
-              <NavLink key={i.href} item={i} path={path} onClick={() => setOpen(false)} />
-            ))}
+          <div key={group.section} className="mb-5">
+            <p className="px-3 pb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-slate-500">{group.section}</p>
+            <div className="space-y-0.5">
+              {items.map((i) => (
+                <NavLink key={i.href} item={i} path={path} />
+              ))}
+            </div>
           </div>
         );
       })
     ) : (
-      <div>
+      <div className="space-y-0.5">
         {PORTAL_NAV.map((i) => (
-          <NavLink key={i.href} item={i} path={path} onClick={() => setOpen(false)} />
+          <NavLink key={i.href} item={i} path={path} />
         ))}
       </div>
     );
@@ -67,35 +92,67 @@ export function AppShell({ user, area, children }: { user: SessionUser; area: 'a
     <div className="min-h-screen lg:flex">
       <aside
         className={cn(
-          'no-print fixed inset-y-0 left-0 z-30 w-64 border-r border-slate-200 bg-white px-3 py-4 transition-transform lg:static lg:translate-x-0',
+          'no-print fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-ink-950 transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0',
           open ? 'translate-x-0' : '-translate-x-full',
         )}
       >
-        <Link href={area === 'app' ? '/app' : '/portal'} className="mb-6 flex items-center gap-2 px-3">
-          <span className="grid h-8 w-8 place-items-center rounded-md bg-brand-600 text-sm font-bold text-white">B</span>
-          <span className="font-semibold text-slate-900">Brightloop</span>
-        </Link>
-        <nav>{nav}</nav>
+        <div className="flex h-16 items-center gap-2.5 px-6">
+          <Link href={area === 'app' ? '/app' : '/portal'} className="flex items-center gap-2.5 rounded-lg focus-visible:outline-2 focus-visible:outline-brand-400">
+            <LogoMark className="h-8 w-8" />
+            <span className="leading-tight">
+              <span className="block text-[15px] font-semibold tracking-tight text-white">Brightloop</span>
+              <span className="block text-[11px] text-slate-500">{area === 'app' ? 'Console' : 'Customer portal'}</span>
+            </span>
+          </Link>
+        </div>
+
+        <nav className="flex-1 overflow-y-auto px-3 pt-3 pb-4">{nav}</nav>
+
+        <div className="border-t border-white/[0.06] p-3">
+          <div className="flex items-center gap-3 rounded-lg px-3 py-2">
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-600/25 text-xs font-semibold text-brand-200 ring-1 ring-brand-400/30">
+              {initials(user.full_name, user.email)}
+            </span>
+            <span className="min-w-0 leading-tight">
+              <span className="block truncate text-[13px] font-medium text-slate-100">{user.full_name || user.email}</span>
+              <span className="block truncate text-[11px] text-slate-500">{user.email}</span>
+            </span>
+          </div>
+        </div>
       </aside>
-      {open && <div className="fixed inset-0 z-20 bg-slate-900/30 lg:hidden" onClick={() => setOpen(false)} />}
+      {open && <div className="fixed inset-0 z-30 bg-slate-950/50 backdrop-blur-[1px] lg:hidden" onClick={() => setOpen(false)} />}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="no-print flex h-14 items-center justify-between gap-4 border-b border-slate-200 bg-white px-4 lg:px-8">
-          <button className="rounded-md p-2 text-slate-600 hover:bg-slate-100 lg:hidden" onClick={() => setOpen(true)} aria-label="Open menu">
-            ☰
+        <header className="no-print sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-slate-200/80 bg-white/85 px-4 backdrop-blur-md lg:px-8">
+          <button
+            className="-ml-1 grid h-9 w-9 place-items-center rounded-lg text-slate-600 hover:bg-slate-100 lg:hidden"
+            onClick={() => setOpen(true)}
+            aria-label="Open menu"
+          >
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.75} className="h-5 w-5" aria-hidden>
+              <path d="M3 5.5h14M3 10h14M3 14.5h14" strokeLinecap="round" />
+            </svg>
           </button>
+          <LogoMark className="h-7 w-7 lg:hidden" />
           <div className="ml-auto flex items-center gap-3">
-            <div className="text-right leading-tight">
-              <p className="text-sm font-medium text-slate-900">{user.full_name}</p>
-              <p className="text-xs text-slate-500">{user.email}</p>
-            </div>
-            <Badge tone={user.role === 'admin' ? 'purple' : user.role === 'staff' ? 'indigo' : 'gray'}>{user.role}</Badge>
-            <Button variant="ghost" size="sm" onClick={logout} loading={leaving}>
-              Sign out
-            </Button>
+            <Badge tone={user.role === 'admin' ? 'purple' : user.role === 'staff' ? 'indigo' : 'gray'} className="capitalize">
+              {user.role}
+            </Badge>
+            <span className="hidden h-5 w-px bg-slate-200 sm:block" aria-hidden />
+            <button
+              type="button"
+              onClick={logout}
+              disabled={leaving}
+              className="inline-flex h-8 items-center gap-1.5 rounded-lg px-2.5 text-[13px] font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-50"
+            >
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-4 w-4" aria-hidden>
+                <path d="M8 3.5H5A1.5 1.5 0 003.5 5v10A1.5 1.5 0 005 16.5h3M13 13.5l3.5-3.5L13 6.5M16.5 10H8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              {leaving ? 'Signing out…' : 'Sign out'}
+            </button>
           </div>
         </header>
-        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-6 lg:px-8">{children}</main>
+        <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-7 sm:px-6 lg:px-10 lg:py-9">{children}</main>
       </div>
     </div>
   );

@@ -17,15 +17,18 @@ export function Pagination({
   const from = total === 0 ? 0 : (page - 1) * pageSize + 1;
   const to = Math.min(page * pageSize, total);
   return (
-    <div className="flex items-center justify-between border-t border-slate-200 px-4 py-3 text-sm text-slate-600">
-      <span>
-        {from.toLocaleString('en-IN')}–{to.toLocaleString('en-IN')} of {total.toLocaleString('en-IN')}
+    <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 bg-slate-50/50 px-4 py-3 text-[13px] text-slate-500">
+      <span className="tabular-nums">
+        <span className="font-medium text-slate-700">
+          {from.toLocaleString('en-IN')}–{to.toLocaleString('en-IN')}
+        </span>{' '}
+        of {total.toLocaleString('en-IN')}
       </span>
       <div className="flex items-center gap-2">
         <Button variant="secondary" size="sm" disabled={page <= 1} onClick={() => onChange(page - 1)}>
           Previous
         </Button>
-        <span className="tabular-nums">
+        <span className="px-1 tabular-nums">
           {page} / {pages}
         </span>
         <Button variant="secondary" size="sm" disabled={page >= pages} onClick={() => onChange(page + 1)}>

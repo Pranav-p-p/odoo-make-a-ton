@@ -2,7 +2,7 @@ import { forwardRef, useId, type InputHTMLAttributes, type ReactNode, type Selec
 import { cn } from './cn';
 
 const control =
-  'block w-full rounded-md border border-slate-300 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-100 disabled:bg-slate-50 disabled:text-slate-500 aria-[invalid=true]:border-red-500';
+  'block w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 shadow-xs transition-[border-color,box-shadow] placeholder:text-slate-400 hover:border-slate-400 focus:border-brand-500 focus:outline-none focus:ring-3 focus:ring-brand-500/15 disabled:bg-slate-50 disabled:text-slate-500 aria-[invalid=true]:border-red-500 aria-[invalid=true]:focus:ring-red-500/15';
 
 export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(function Input({ className, ...p }, ref) {
   return <input ref={ref} className={cn(control, 'h-10', className)} {...p} />;
@@ -46,7 +46,7 @@ export function Field({
   const message = Array.isArray(error) ? error[0] : error;
   return (
     <div className={cn('space-y-1.5', className)}>
-      <label htmlFor={id} className="block text-sm font-medium text-slate-700">
+      <label htmlFor={id} className="block text-[13px] font-medium text-slate-700">
         {label}
         {required && <span className="text-red-600"> *</span>}
       </label>
@@ -77,9 +77,12 @@ export function Switch({
         aria-checked={checked}
         disabled={disabled}
         onClick={() => onChange(!checked)}
-        className={cn('mt-0.5 relative h-5 w-9 shrink-0 rounded-full transition-colors', checked ? 'bg-brand-600' : 'bg-slate-300')}
+        className={cn(
+          'relative mt-0.5 h-5 w-9 shrink-0 rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500',
+          checked ? 'bg-brand-600' : 'bg-slate-300',
+        )}
       >
-        <span className={cn('absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all', checked ? 'left-[18px]' : 'left-0.5')} />
+        <span className={cn('absolute top-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-all', checked ? 'left-[18px]' : 'left-0.5')} />
       </button>
       <span>
         <span className="block text-sm font-medium text-slate-800">{label}</span>

@@ -49,16 +49,19 @@ export function DataTable<T extends { id: string | number }>({
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-slate-200 text-sm">
-        <thead className="bg-slate-50">
+      <table className="min-w-full text-sm">
+        <thead className="border-b border-slate-200 bg-slate-50/80">
           <tr>
             {selectable && (
               <th className="w-10 px-4 py-2.5">
-                <input type="checkbox" aria-label="Select all" checked={!!allSelected} onChange={toggleAll} />
+                <input type="checkbox" aria-label="Select all" checked={!!allSelected} onChange={toggleAll} className="accent-brand-600" />
               </th>
             )}
             {columns.map((c) => (
-              <th key={c.key} className={cn('px-4 py-2.5 font-medium text-slate-600', align(c.align), c.className)}>
+              <th
+                key={c.key}
+                className={cn('px-4 py-2.5 text-[11px] font-medium uppercase tracking-wider whitespace-nowrap text-slate-500', align(c.align), c.className)}
+              >
                 {c.header}
               </th>
             ))}
@@ -68,14 +71,14 @@ export function DataTable<T extends { id: string | number }>({
           {loading && !rows ? (
             Array.from({ length: 5 }).map((_, i) => (
               <tr key={i}>
-                <td colSpan={columns.length + (selectable ? 1 : 0)} className="px-4 py-3">
-                  <div className="h-4 animate-pulse rounded bg-slate-100" />
+                <td colSpan={columns.length + (selectable ? 1 : 0)} className="px-4 py-3.5">
+                  <div className="h-4 animate-pulse rounded-md bg-slate-100" style={{ width: `${90 - i * 9}%` }} />
                 </td>
               </tr>
             ))
           ) : list.length === 0 ? (
             <tr>
-              <td colSpan={columns.length + (selectable ? 1 : 0)} className="px-4 py-10 text-center text-slate-500">
+              <td colSpan={columns.length + (selectable ? 1 : 0)} className="px-4 py-14 text-center text-sm text-slate-500">
                 {empty}
               </td>
             </tr>
@@ -84,15 +87,25 @@ export function DataTable<T extends { id: string | number }>({
               <tr
                 key={row.id}
                 onClick={rowHref ? () => router.push(rowHref(row)) : undefined}
-                className={cn(rowHref && 'cursor-pointer hover:bg-slate-50')}
+                className={cn(
+                  'transition-colors',
+                  rowHref && 'cursor-pointer hover:bg-brand-50/50',
+                  selected?.has(row.id) && 'bg-brand-50/60',
+                )}
               >
                 {selectable && (
-                  <td className="px-4 py-2.5" onClick={(e) => e.stopPropagation()}>
-                    <input type="checkbox" aria-label="Select row" checked={!!selected?.has(row.id)} onChange={() => toggle(row.id)} />
+                  <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="checkbox"
+                      aria-label="Select row"
+                      checked={!!selected?.has(row.id)}
+                      onChange={() => toggle(row.id)}
+                      className="accent-brand-600"
+                    />
                   </td>
                 )}
                 {columns.map((c) => (
-                  <td key={c.key} className={cn('px-4 py-2.5 text-slate-800', align(c.align), c.className)}>
+                  <td key={c.key} className={cn('px-4 py-3 text-slate-800', align(c.align), c.className)}>
                     {c.cell(row)}
                   </td>
                 ))}

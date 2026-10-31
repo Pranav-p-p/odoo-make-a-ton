@@ -1,18 +1,77 @@
 @import "tailwindcss";
 
+/* Fonts come from next/font in app/layout.tsx (CSS variables on <html>). */
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
 @theme {
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --color-brand-50: #eef2ff;
-  --color-brand-100: #e0e7ff;
-  --color-brand-500: #6366f1;
-  --color-brand-600: #4f46e5;
-  --color-brand-700: #4338ca;
+  /* Brightloop teal. 600 is the working shade: AA contrast as text on white and behind white text. */
+  --color-brand-50: #effaf8;
+  --color-brand-100: #d5f2ec;
+  --color-brand-200: #ade4da;
+  --color-brand-300: #77cfc2;
+  --color-brand-400: #3fb2a4;
+  --color-brand-500: #14948a;
+  --color-brand-600: #0e766f;
+  --color-brand-700: #0f5f5a;
+  --color-brand-800: #114d4a;
+  --color-brand-900: #12403e;
+
+  /* Sidebar ink */
+  --color-ink-800: #172033;
+  --color-ink-900: #0f1626;
+  --color-ink-950: #0a0f1c;
+
+  --shadow-xs: 0 1px 2px 0 rgb(16 24 40 / 0.05);
+  --shadow-card: 0 1px 2px 0 rgb(16 24 40 / 0.04), 0 1px 3px 0 rgb(16 24 40 / 0.04);
+  --shadow-pop: 0 20px 40px -12px rgb(15 23 42 / 0.25), 0 4px 10px -4px rgb(15 23 42 / 0.1);
 }
 
 html,
 body {
-  background: #f8fafc;
+  background: #f5f6f8;
   color: #0f172a;
+}
+
+body {
+  font-feature-settings: "cv11", "ss01";
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-brand-100);
+  color: var(--color-brand-900);
+}
+
+/* Native <dialog> entrance (components/ui/dialog.tsx) */
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+dialog[open] {
+  animation: dialog-in 160ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+dialog[open]::backdrop {
+  animation: backdrop-in 160ms ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  dialog[open],
+  dialog[open]::backdrop {
+    animation: none;
+  }
 }
 
 /* Print: only the printable area shows. Used by /print/invoices/[id]. */
