@@ -36,7 +36,7 @@ export function Dialog({
     >
       <div className="flex items-start justify-between gap-4 px-6 pt-5 pb-4">
         <div className="min-w-0">
-          <h2 className="text-base font-semibold tracking-tight text-slate-900">{title}</h2>
+          <h2 className="font-display text-lg font-semibold tracking-[-0.01em] text-slate-900">{title}</h2>
           {description && <p className="mt-1 text-[13px] text-slate-500">{description}</p>}
         </div>
         <button

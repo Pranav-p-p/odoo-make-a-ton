@@ -9,10 +9,10 @@ const base =
   'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-[background-color,border-color,color,box-shadow,transform] duration-150 active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap select-none';
 const variants: Record<Variant, string> = {
   primary:
-    'bg-brand-600 text-white shadow-xs shadow-brand-900/20 inset-ring inset-ring-white/10 hover:bg-brand-700',
+    'bg-gradient-to-b from-brand-500 to-brand-600 text-white ring-1 ring-brand-700 shadow-[inset_0_1px_0_rgb(255_255_255/0.22),0_1px_2px_rgb(7_43_40/0.25)] hover:from-brand-600 hover:to-brand-700',
   secondary: 'bg-white text-slate-800 border border-slate-300 shadow-xs hover:border-slate-400 hover:bg-slate-50',
   ghost: 'text-slate-600 hover:bg-slate-900/5 hover:text-slate-900',
-  danger: 'bg-red-600 text-white shadow-xs shadow-red-900/20 hover:bg-red-700',
+  danger: 'bg-gradient-to-b from-red-500 to-red-600 text-white ring-1 ring-red-700 shadow-[inset_0_1px_0_rgb(255_255_255/0.2),0_1px_2px_rgb(127_29_29/0.25)] hover:from-red-600 hover:to-red-700',
 };
 const sizes: Record<Size, string> = { sm: 'h-8 px-3 text-[13px]', md: 'h-10 px-4 text-sm' };
 

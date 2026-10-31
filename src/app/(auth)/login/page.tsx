@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
 import { api } from '@/lib/client/api';
 import { errorMessage } from '@/lib/client/errors';
-import { Button, Field, Input } from '@/components/ui';
+import { Button, Field, Input, PasswordInput } from '@/components/ui';
 
 function LoginForm() {
   const router = useRouter();
@@ -34,27 +34,48 @@ function LoginForm() {
   }
 
   return (
-    <form onSubmit={submit} className="space-y-4">
-      <div>
-        <h1 className="text-xl font-semibold text-slate-900">Sign in</h1>
-        <p className="mt-1 text-sm text-slate-500">Welcome back.</p>
+    <form onSubmit={submit} className="space-y-5">
+      <div className="mb-8">
+        <h1 className="font-display text-[34px] leading-tight font-semibold tracking-[-0.02em] text-slate-900">Sign in</h1>
+        <p className="mt-2 text-[15px] text-slate-500">Use the email your team or account manager registered for you.</p>
       </div>
-      <Field label="Email">{(id) => <Input id={id} type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} />}</Field>
-      <Field label="Password">
-        {(id) => <Input id={id} type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} />}
+      <Field label="Email">
+        {(id) => (
+          <Input id={id} type="email" autoComplete="email" placeholder="you@company.com" required value={email} onChange={(e) => setEmail(e.target.value)} className="h-11" />
+        )}
       </Field>
-      {error && <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
-      <Button type="submit" className="w-full" loading={busy}>
+      <div className="space-y-1.5">
+        <div className="flex items-baseline justify-between">
+          <label htmlFor="login-password" className="block text-[13px] font-medium text-slate-700">
+            Password
+          </label>
+          <Link href="/forgot-password" className="text-[13px] font-medium text-brand-600 hover:text-brand-700 hover:underline">
+            Forgot password?
+          </Link>
+        </div>
+        <PasswordInput
+          id="login-password"
+          autoComplete="current-password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="h-11"
+        />
+      </div>
+      {error && (
+        <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700">
+          {error}
+        </p>
+      )}
+      <Button type="submit" className="h-11 w-full text-[15px]" loading={busy}>
         Sign in
       </Button>
-      <div className="flex justify-between text-sm">
-        <Link href="/forgot-password" className="text-brand-600 hover:underline">
-          Forgot password?
-        </Link>
-        <Link href="/signup" className="text-brand-600 hover:underline">
+      <p className="pt-2 text-sm text-slate-500">
+        New customer?{' '}
+        <Link href="/signup" className="font-medium text-brand-600 hover:text-brand-700 hover:underline">
           Create an account
         </Link>
-      </div>
+      </p>
     </form>
   );
 }

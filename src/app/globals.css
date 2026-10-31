@@ -4,6 +4,7 @@
 @theme inline {
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-display: var(--font-bricolage), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 @theme {
@@ -19,19 +20,22 @@
   --color-brand-800: #114d4a;
   --color-brand-900: #12403e;
 
-  /* Sidebar ink */
-  --color-ink-800: #172033;
-  --color-ink-900: #0f1626;
-  --color-ink-950: #0a0f1c;
+  /* Deep spruce: sidebar and the sign-in panel. Mint is the one accent, used only on spruce. */
+  --color-spruce-700: #135650;
+  --color-spruce-800: #0f4743;
+  --color-spruce-900: #0a3a36;
+  --color-spruce-950: #072b28;
+  --color-mint: #7be0c8;
+
+  --color-paper: #f6f7f5;
 
   --shadow-xs: 0 1px 2px 0 rgb(16 24 40 / 0.05);
-  --shadow-card: 0 1px 2px 0 rgb(16 24 40 / 0.04), 0 1px 3px 0 rgb(16 24 40 / 0.04);
-  --shadow-pop: 0 20px 40px -12px rgb(15 23 42 / 0.25), 0 4px 10px -4px rgb(15 23 42 / 0.1);
+  --shadow-pop: 0 24px 48px -16px rgb(7 43 40 / 0.28), 0 4px 12px -4px rgb(15 23 42 / 0.1);
 }
 
 html,
 body {
-  background: #f5f6f8;
+  background: var(--color-paper);
   color: #0f172a;
 }
 
@@ -43,6 +47,25 @@ body {
 ::selection {
   background: var(--color-brand-100);
   color: var(--color-brand-900);
+}
+
+/* Sign-in panel: the dot travels the loop once and rests on "Active" (components/shell/auth-panel.tsx) */
+@keyframes auth-orbit {
+  from {
+    transform: rotate(250deg);
+  }
+  to {
+    transform: rotate(730deg);
+  }
+}
+.auth-orbit {
+  transform: rotate(10deg);
+  animation: auth-orbit 2.8s cubic-bezier(0.55, 0.05, 0.25, 1) 0.3s both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .auth-orbit {
+    animation: none;
+  }
 }
 
 /* Native <dialog> entrance (components/ui/dialog.tsx) */

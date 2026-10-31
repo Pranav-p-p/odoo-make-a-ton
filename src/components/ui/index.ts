@@ -1,7 +1,7 @@
 // The shared UI kit. Import from '@/components/ui'.
 export { cn } from './cn';
 export { Button, ButtonLink, type ButtonProps } from './button';
-export { Input, Textarea, Select, Field, Switch } from './form';
+export { Input, PasswordInput, Textarea, Select, Field, Switch } from './form';
 export { Card, CardHeader, CardBody, DescriptionList, Stat } from './card';
 export { Badge, SubscriptionStatusBadge, InvoiceStatusBadge } from './badge';
 export { DataTable, type Column } from './table';

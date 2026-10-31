@@ -60,7 +60,7 @@ export function DataTable<T extends { id: string | number }>({
             {columns.map((c) => (
               <th
                 key={c.key}
-                className={cn('px-4 py-2.5 text-[11px] font-medium uppercase tracking-wider whitespace-nowrap text-slate-500', align(c.align), c.className)}
+                className={cn('px-4 py-2.5 text-[12.5px] font-medium whitespace-nowrap text-slate-500', align(c.align), c.className)}
               >
                 {c.header}
               </th>

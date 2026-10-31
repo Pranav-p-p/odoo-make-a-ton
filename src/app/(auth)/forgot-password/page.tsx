@@ -28,8 +28,8 @@ export default function ForgotPasswordPage() {
 
   if (sent) {
     return (
-      <div className="space-y-4 text-center">
-        <h1 className="text-xl font-semibold text-slate-900">Check your email</h1>
+      <div className="space-y-5">
+        <h1 className="font-display text-[34px] leading-tight font-semibold tracking-[-0.02em] text-slate-900">Check your email</h1>
         <p className="text-sm text-slate-600">If an account exists for {email}, a link to reset your password is on its way.</p>
         {sent.devLink && (
           <p className="rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-900">
@@ -46,17 +46,17 @@ export default function ForgotPasswordPage() {
     );
   }
   return (
-    <form onSubmit={submit} className="space-y-4">
+    <form onSubmit={submit} className="space-y-5">
       <div>
-        <h1 className="text-xl font-semibold text-slate-900">Reset your password</h1>
-        <p className="mt-1 text-sm text-slate-500">We’ll email you a reset link.</p>
+        <h1 className="font-display text-[34px] leading-tight font-semibold tracking-[-0.02em] text-slate-900">Reset your password</h1>
+        <p className="mt-2 text-[15px] text-slate-500">We’ll email you a reset link.</p>
       </div>
       <Field label="Email">{(id) => <Input id={id} type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />}</Field>
-      {error && <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
-      <Button type="submit" className="w-full" loading={busy}>
+      {error && <p role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700">{error}</p>}
+      <Button type="submit" className="h-11 w-full text-[15px]" loading={busy}>
         Send reset link
       </Button>
-      <p className="text-center text-sm">
+      <p className="pt-2 text-sm">
         <Link href="/login" className="text-brand-600 hover:underline">
           Back to sign in
         </Link>

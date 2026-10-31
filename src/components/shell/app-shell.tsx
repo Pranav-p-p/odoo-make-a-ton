@@ -29,13 +29,13 @@ function NavLink({ item, path, onClick }: { item: NavItem; path: string; onClick
       aria-current={active ? 'page' : undefined}
       className={cn(
         'group relative flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors',
-        active ? 'bg-white/[0.08] text-white' : 'text-slate-400 hover:bg-white/[0.04] hover:text-slate-100',
+        active ? 'bg-white/[0.09] text-white' : 'text-white/60 hover:bg-white/[0.05] hover:text-white',
       )}
     >
-      {active && <span aria-hidden className="absolute inset-y-1.5 -left-3 w-[3px] rounded-r-full bg-brand-400" />}
+      {active && <span aria-hidden className="absolute inset-y-1.5 -left-3 w-[3px] rounded-r-full bg-mint" />}
       <NavIcon
         name={item.icon}
-        className={cn('h-[18px] w-[18px] shrink-0', active ? 'text-brand-300' : 'text-slate-500 group-hover:text-slate-300')}
+        className={cn('h-[18px] w-[18px] shrink-0', active ? 'text-mint' : 'text-white/40 group-hover:text-white/70')}
       />
       {item.label}
     </Link>
@@ -71,7 +71,7 @@ export function AppShell({ user, area, children }: { user: SessionUser; area: 'a
         if (!items.length) return null;
         return (
           <div key={group.section} className="mb-5">
-            <p className="px-3 pb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.12em] text-slate-500">{group.section}</p>
+            <p className="px-3 pb-1.5 text-[12px] font-medium text-white/40">{group.section}</p>
             <div className="space-y-0.5">
               {items.map((i) => (
                 <NavLink key={i.href} item={i} path={path} />
@@ -92,16 +92,16 @@ export function AppShell({ user, area, children }: { user: SessionUser; area: 'a
     <div className="min-h-screen lg:flex">
       <aside
         className={cn(
-          'no-print fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-ink-950 transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0',
+          'no-print fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-spruce-950 transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0',
           open ? 'translate-x-0' : '-translate-x-full',
         )}
       >
         <div className="flex h-16 items-center gap-2.5 px-6">
-          <Link href={area === 'app' ? '/app' : '/portal'} className="flex items-center gap-2.5 rounded-lg focus-visible:outline-2 focus-visible:outline-brand-400">
+          <Link href={area === 'app' ? '/app' : '/portal'} className="flex items-center gap-2.5 rounded-lg focus-visible:outline-2 focus-visible:outline-mint">
             <LogoMark className="h-8 w-8" />
             <span className="leading-tight">
-              <span className="block text-[15px] font-semibold tracking-tight text-white">Brightloop</span>
-              <span className="block text-[11px] text-slate-500">{area === 'app' ? 'Console' : 'Customer portal'}</span>
+              <span className="block font-display text-[16px] font-semibold tracking-tight text-white">Brightloop</span>
+              <span className="block text-[11px] text-white/45">{area === 'app' ? 'Console' : 'Customer portal'}</span>
             </span>
           </Link>
         </div>
@@ -110,12 +110,12 @@ export function AppShell({ user, area, children }: { user: SessionUser; area: 'a
 
         <div className="border-t border-white/[0.06] p-3">
           <div className="flex items-center gap-3 rounded-lg px-3 py-2">
-            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-brand-600/25 text-xs font-semibold text-brand-200 ring-1 ring-brand-400/30">
+            <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-mint/15 text-xs font-semibold text-mint ring-1 ring-mint/25">
               {initials(user.full_name, user.email)}
             </span>
             <span className="min-w-0 leading-tight">
-              <span className="block truncate text-[13px] font-medium text-slate-100">{user.full_name || user.email}</span>
-              <span className="block truncate text-[11px] text-slate-500">{user.email}</span>
+              <span className="block truncate text-[13px] font-medium text-white">{user.full_name || user.email}</span>
+              <span className="block truncate text-[11px] text-white/45">{user.email}</span>
             </span>
           </div>
         </div>

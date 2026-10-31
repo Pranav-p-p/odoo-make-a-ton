@@ -31,7 +31,7 @@ export function PageHeader({
       )}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="text-[26px] leading-tight font-semibold tracking-tight text-slate-900">{title}</h1>
+          <h1 className="font-display text-[30px] leading-tight font-semibold tracking-[-0.02em] text-slate-900">{title}</h1>
           {description && <p className="mt-1.5 max-w-2xl text-sm text-slate-500">{description}</p>}
         </div>
         {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
@@ -42,7 +42,7 @@ export function PageHeader({
 
 export function EmptyState({ title, description, action }: { title: string; description?: string; action?: ReactNode }) {
   return (
-    <div className="rounded-xl border border-dashed border-slate-300 bg-white/60 px-6 py-14 text-center">
+    <div className="rounded-[14px] border border-dashed border-slate-300 bg-white/60 px-6 py-14 text-center">
       <div className="mx-auto mb-3 grid h-10 w-10 place-items-center rounded-full bg-brand-50 text-brand-600 ring-1 ring-brand-100">
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.5} className="h-5 w-5" aria-hidden>
           <path d="M3.5 7.5h13M5 4h10a1.5 1.5 0 011.5 1.5v9A1.5 1.5 0 0115 16H5a1.5 1.5 0 01-1.5-1.5v-9A1.5 1.5 0 015 4z" strokeLinejoin="round" />
