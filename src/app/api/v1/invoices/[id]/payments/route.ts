@@ -1,6 +1,13 @@
 import { route, created } from '@/lib/api/handler';
 import { unwrap } from '@/lib/api/errors';
 import { recordPaymentSchema } from '@/lib/validation/s4';
+import type { Payment } from '@/lib/types';
+
+// S4 · Payments recorded against one invoice, oldest first (customers: own only, via RLS)
+export const GET = route<undefined, undefined, { id: string }>({ access: 'any' }, async ({ params, supabase }) => {
+  const res = await supabase.from('payments').select('*').eq('invoice_id', params.id).order('paid_on').order('created_at');
+  return { data: unwrap<Payment[]>(res) };
+});
 
 // S4 · Record a payment against an invoice (PAY-1, D-24)
 // Only staff and admin may record payments.

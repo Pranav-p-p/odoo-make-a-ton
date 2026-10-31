@@ -1,5 +1,6 @@
 import { created, route } from '@/lib/api/handler';
 import { unwrap } from '@/lib/api/errors';
+import { orIlike } from '@/lib/api/pagination';
 import { subscriptionsQuery, createSubscriptionSchema } from '@/lib/validation/s2';
 import type { Paged, Subscription, SubscriptionListRow } from '@/lib/types';
 
@@ -37,8 +38,7 @@ export const GET = route({ access: ['admin', 'staff', 'customer'], query: subscr
   }
 
   if (query?.q) {
-    const term = `%${query.q.trim()}%`;
-    req = req.or(`number.ilike.${term},customer_name.ilike.${term},company_name.ilike.${term}`);
+    req = req.or(orIlike(['number', 'customer_name', 'company_name'], query.q));
   }
 
   const sort = query?.sort ?? '-created_at';

@@ -253,10 +253,10 @@ begin
     if s.status = 'active'    then a := a || array['edit_lines']; end if;
   end if;
   if s.status = 'active' then
-    if not s.is_paused and pl.allow_pause then a := a || 'pause'; end if;
-    if s.is_paused and s.pause_reason = 'manual' then a := a || 'resume'; end if;
-    if pl.allow_renew and s.expiry_date is not null then a := a || 'renew'; end if;
-    if s.pause_reason = 'out_of_term' or pl.allow_early_close or public.is_admin() then a := a || 'close'; end if;
+    if not s.is_paused and pl.allow_pause then a := array_append(a, 'pause'); end if;
+    if s.is_paused and s.pause_reason = 'manual' then a := array_append(a, 'resume'); end if;
+    if pl.allow_renew and s.expiry_date is not null then a := array_append(a, 'renew'); end if;
+    if s.pause_reason = 'out_of_term' or pl.allow_early_close or public.is_admin() then a := array_append(a, 'close'); end if;
   end if;
   return a;
 end $$;

@@ -1,7 +1,6 @@
 // Print page: /print/invoices/[id]
 // Accessible to admin, staff, and the owning customer (never Draft).
 // Opens the print dialog automatically on load.
-import { use } from 'react';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { loadSessionUser } from '@/lib/auth';
@@ -31,17 +30,22 @@ async function getInvoice(id: string) {
   return { inv: inv as Invoice, lines: (lines ?? []) as InvoiceLine[] };
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const supabase = await createClient();
+  const { data } = await supabase.from('invoices').select('number').eq('id', id).maybeSingle();
+  return { title: data?.number ? `Invoice ${data.number}` : 'Invoice' };
+}
+
 export default async function PrintInvoicePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params);
+  const { id } = await params;
   const { inv, lines } = await getInvoice(id);
 
   return (
-    <html>
-      <head>
-        <title>Invoice {inv.number}</title>
+    <div className="print-invoice">
         <style>{`
           @page { size: A4; margin: 20mm; }
-          body { font-family: sans-serif; font-size: 13px; color: #1e293b; }
+          .print-invoice { max-width: 860px; margin: 0 auto; padding: 32px 24px; font-family: sans-serif; font-size: 13px; color: #1e293b; }
           h1 { font-size: 22px; font-weight: 700; margin: 0 0 4px; }
           .meta { color: #64748b; font-size: 12px; margin-bottom: 24px; }
           .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
@@ -59,8 +63,6 @@ export default async function PrintInvoicePage({ params }: { params: Promise<{ i
           .footer { margin-top: 40px; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 12px; }
           @media print { button { display: none; } }
         `}</style>
-      </head>
-      <body>
         {/* Auto-print */}
         <script dangerouslySetInnerHTML={{ __html: 'window.onload=()=>window.print()' }} />
 
@@ -151,7 +153,6 @@ export default async function PrintInvoicePage({ params }: { params: Promise<{ i
           Brightloop Software · Thank you for your business.
           This is a computer-generated invoice.
         </p>
-      </body>
-    </html>
+    </div>
   );
 }

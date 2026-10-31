@@ -12,7 +12,7 @@
 import { config } from 'dotenv';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-config({ path: '.env.local' });
+config({ path: ['.env.local', '.env'], quiet: true });
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const appUrl = process.env.APP_URL;

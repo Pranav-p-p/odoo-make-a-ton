@@ -55,7 +55,8 @@ export const GET = route<undefined, undefined, { id: string }>({ access: ['admin
   const plan = unwrap<Plan>(planRes, 'Plan');
   const payment_term = termRes.data ? (termRes.data as PaymentTerm) : null;
   const lines = (linesRes.data ?? []) as SubscriptionLine[];
-  const allowed_actions = (actionsRes.data ?? []) as SubscriptionAction[];
+  // Surface a failing rules function instead of silently hiding every action button.
+  const allowed_actions = (unwrap(actionsRes) ?? []) as SubscriptionAction[];
   const rawHistory = (historyRes.data ?? []) as StatusHistoryRow[];
   const profiles = (profilesRes.data ?? []) as { id: string; full_name: string; email: string }[];
   let invoices = (invRes.data ?? []) as InvoiceListRow[];

@@ -1,6 +1,7 @@
 import { created, route } from '@/lib/api/handler';
 import { unwrap } from '@/lib/api/errors';
 import { pageQuery } from '@/lib/validation/common';
+import { orIlike } from '@/lib/api/pagination';
 import { customerSchema } from '@/lib/validation/s2';
 import type { Customer, Paged } from '@/lib/types';
 
@@ -22,8 +23,7 @@ export const GET = route({ access: ['admin', 'staff', 'customer'], query: pageQu
   let req = supabase.from('customers').select('*', { count: 'exact' });
 
   if (query?.q) {
-    const term = `%${query.q.trim()}%`;
-    req = req.or(`name.ilike.${term},email.ilike.${term},company_name.ilike.${term}`);
+    req = req.or(orIlike(['name', 'email', 'company_name'], query.q));
   }
 
   const sort = query?.sort ?? '-created_at';

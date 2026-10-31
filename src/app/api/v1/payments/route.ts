@@ -15,7 +15,7 @@ export const GET = route(
     let qb = supabase
       .from('payments')
       .select(
-        '*, invoices!inner(number), customers!inner(name)',
+        '*, invoices(number), customers(name)',
         { count: 'exact' },
       )
       .order(col, order)
@@ -31,7 +31,21 @@ export const GET = route(
     if (to) qb = qb.lte('paid_on', to);
     if (method) qb = qb.eq('method', method);
     if (customer_id) qb = qb.eq('customer_id', customer_id);
-    if (q) qb = qb.or(orIlike(['customers.name', 'invoices.number'], q));
+    if (q) {
+      // PostgREST cannot OR across two embedded tables, so resolve the matching ids first.
+      const [custs, invs] = await Promise.all([
+        supabase.from('customers').select('id').or(orIlike(['name', 'company_name'], q)).limit(200),
+        supabase.from('invoices').select('id').or(orIlike(['number'], q)).limit(200),
+      ]);
+      const custIds = (custs.data ?? []).map((r) => r.id);
+      const invIds = (invs.data ?? []).map((r) => r.id);
+      if (!custIds.length && !invIds.length) return paged([], 0, { page, page_size });
+      const parts = [
+        ...(custIds.length ? [`customer_id.in.(${custIds.join(',')})`] : []),
+        ...(invIds.length ? [`invoice_id.in.(${invIds.join(',')})`] : []),
+      ];
+      qb = qb.or(parts.join(','));
+    }
 
     const { data, count, error } = await qb;
     if (error) throw fromPostgres(error);
