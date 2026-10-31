@@ -1,10 +1,24 @@
+import type { SupabaseClient } from '@supabase/supabase-js';
 import { route } from '@/lib/api/handler';
 import { unwrap } from '@/lib/api/errors';
 import type { Customer, Plan, PaymentTerm, Product, QuoteTemplate, QuoteTemplateLine, ProductVariant } from '@/lib/types';
 
+// PostgREST caps a response at 1,000 rows, so customers are read page by page.
+async function allCustomers(supabase: SupabaseClient): Promise<Customer[]> {
+  const pageSize = 1000;
+  const { count } = await supabase.from('customers').select('id', { count: 'exact', head: true });
+  const pages = Math.max(1, Math.ceil((count ?? 0) / pageSize));
+  const results = await Promise.all(
+    Array.from({ length: pages }, (_, i) =>
+      supabase.from('customers').select('*').order('name').order('id').range(i * pageSize, (i + 1) * pageSize - 1),
+    ),
+  );
+  return results.flatMap((r) => unwrap<Customer[]>(r));
+}
+
 export const GET = route({ access: ['admin', 'staff'] }, async ({ supabase }) => {
-  const [customersRes, plansRes, termsRes, templatesRes, templateLinesRes, productsRes, variantsRes] = await Promise.all([
-    supabase.from('customers').select('*').order('name'),
+  const [customers, plansRes, termsRes, templatesRes, templateLinesRes, productsRes, variantsRes] = await Promise.all([
+    allCustomers(supabase),
     supabase.from('plans').select('*').eq('is_active', true).order('name'),
     supabase.from('payment_terms').select('*').eq('is_active', true).order('days'),
     supabase.from('quote_templates').select('*').eq('is_active', true).order('name'),
@@ -13,7 +27,6 @@ export const GET = route({ access: ['admin', 'staff'] }, async ({ supabase }) =>
     supabase.from('product_variants').select('*'),
   ]);
 
-  const customers = (customersRes.data ?? []) as Customer[];
   const plans = (plansRes.data ?? []) as Plan[];
   const paymentTerms = (termsRes.data ?? []) as PaymentTerm[];
   const rawTemplates = (templatesRes.data ?? []) as QuoteTemplate[];
