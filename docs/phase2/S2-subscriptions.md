@@ -1,6 +1,6 @@
 # S2 · Customers and subscriptions: your Phase 2 instructions
 
-**Branch:** `s2-subscriptions` · **Owner:** ________ · **Demo:** scene 2 (40 s) + portal half of scene 6
+**Branch:** `s2-subscriptions` · **Owner:** LAKSHMIDATH S· **Demo:** scene 2 (40 s) + portal half of scene 6
 **You deliver:** customers exist in the system; the team turns an offer into an active subscription and manages it through its whole life; customers manage their own in the portal.
 **Requirement IDs:** AUTH-5, SUB-1, SUB-2, SUB-3, PORTAL-1 · **Decisions:** D-2, D-5…D-14, D-27
 

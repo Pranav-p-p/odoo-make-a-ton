@@ -1,6 +1,6 @@
 # S1 · Commercial setup: your Phase 2 instructions
 
-**Branch:** `s1-catalog` · **Owner:** ________ · **Demo:** scene 1 (35 s)
+**Branch:** `s1-catalog` · **Owner:** MUZAMMIL C K · **Demo:** scene 1 (35 s)
 **You deliver:** the admin can configure everything needed to sell a subscription.
 **Requirement IDs:** CAT-1, CAT-2, CAT-3, CAT-4, CAT-5, CAT-6, DISC-1, DISC-2 · **Decisions:** D-4, D-11, D-21
 

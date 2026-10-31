@@ -1,6 +1,6 @@
 # S4 · Payments and finance: your Phase 2 instructions
 
-**Branch:** `s4-finance` · **Owner:** ________ · **Demo:** scenes 4 and 5 (70 s)
+**Branch:** `s4-finance` · **Owner:** AKHILESWAR R · **Demo:** scenes 4 and 5 (70 s)
 **You deliver:** payments recorded against the right invoice, and one dashboard where the finance lead sees the company's position at once.
 **Requirement IDs:** PAY-1, PAY-2, REP-1, REP-2, NFR-1 (the measured proof) · **Decisions:** D-24, D-25
 
