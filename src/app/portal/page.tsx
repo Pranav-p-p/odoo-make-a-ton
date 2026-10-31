@@ -1,0 +1,14 @@
+// Starter page from Core. S2 replaces this file (docs/phase2/).
+import { StarterPage } from '@/components/shell/starter';
+
+export default function Page() {
+  return (
+    <StarterPage
+      title="My subscriptions"
+      slice="S2"
+      ids="PORTAL-1"
+      source="subscriptions"
+      todo={["The customer’s own subscriptions (never Draft), with status badges"]}
+    />
+  );
+}
