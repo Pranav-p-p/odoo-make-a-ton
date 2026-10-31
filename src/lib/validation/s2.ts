@@ -11,6 +11,7 @@ export const customerSchema = z.object({
   gstin: optionalText,
 });
 export const customerProfileSchema = customerSchema.pick({ name: true, phone: true, address: true }).partial(); // portal: no email change
+export const updateCustomerSchema = customerSchema.partial();
 
 export const createStaffSchema = z.object({ full_name: name, email, role: z.enum(['staff', 'admin']).default('staff') });
 export const updateUserSchema = z.object({ role: z.enum(['staff', 'admin']).optional(), is_active: z.boolean().optional() });
@@ -43,6 +44,14 @@ export const createSubscriptionSchema = z.union([
     lines: z.array(subscriptionLineSchema).default([]),
   }),
 ]);
+export const updateSubscriptionHeaderSchema = z.object({
+  customer_id: uuid.optional(),
+  plan_id: uuid.optional(),
+  start_date: isoDate.optional(),
+  expiry_date: isoDate.nullable().optional(),
+  payment_term_id: uuid.nullable().optional(),
+  notes: optionalText,
+});
 export const transitionSchema = z.object({ to: z.enum(['quotation', 'confirmed', 'active', 'closed']), note: optionalText });
 export const pauseSchema = z.object({ note: optionalText });
 export const closeSchema = z.object({ reason: optionalText });
