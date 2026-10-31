@@ -1,14 +1,8 @@
-// Starter page from Core. S1 replaces this file (docs/phase2/).
-import { StarterPage } from '@/components/shell/starter';
+// S1 · CAT-5 · Taxes & Payment Terms settings page
+import { requireUser } from '@/lib/session';
+import SettingsClient from '@/components/s1/SettingsClient';
 
-export default function Page() {
-  return (
-    <StarterPage
-      title="Taxes & payment terms"
-      slice="S1"
-      ids="CAT-5"
-      source="taxes"
-      todo={["Inline add / edit / archive for taxes (name, rate %) and payment terms (name, days)"]}
-    />
-  );
+export default async function SettingsPage() {
+  const user = await requireUser(['admin', 'staff'], '/app/settings');
+  return <SettingsClient isAdmin={user.role === 'admin'} />;
 }

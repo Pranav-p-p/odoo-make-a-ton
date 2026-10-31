@@ -1,6 +1,6 @@
 # S3 · Billing and invoices: your Phase 2 instructions
 
-**Branch:** `s3-billing` · **Owner:** ________ · **Demo:** scene 3 (65 s, the longest and most judged)
+**Branch:** `s3-billing` · **Owner:** PRANAV P P · **Demo:** scene 3 (65 s, the longest and most judged)
 **You deliver:** due subscriptions produce correct invoices exactly once; the team confirms, cancels, sends and prints them.
 **Requirement IDs:** BILL-1, BILL-2, BILL-3, BILL-4, DISC-3 · **Decisions:** D-1, D-3, D-4, D-5, D-15…D-23, D-28
 

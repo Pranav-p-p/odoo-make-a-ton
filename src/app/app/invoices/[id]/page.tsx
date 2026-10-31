@@ -16,7 +16,7 @@ import {
 // S4 provides this component at src/components/s4/record-payment.tsx
 import dynamic from 'next/dynamic';
 const RecordPayment = dynamic(
-  () => import('@/components/s4/record-payment').then((m) => m.RecordPayment),
+  () => import('@/components/s4/record-payment').then((m) => m.RecordPaymentDialog),
   { ssr: false },
 );
 
@@ -257,7 +257,7 @@ export default function InvoiceDetailPage({ params }: { params: Promise<{ id: st
               <RecordPayment
                 invoiceId={id}
                 amountDue={inv.amount_due}
-                onSuccess={() => { mutate(); refresh('/invoices'); refresh('/payments'); }}
+                onDone={() => { mutate(); refresh('/invoices'); refresh('/payments'); }}
               />
             )}
           </div>
