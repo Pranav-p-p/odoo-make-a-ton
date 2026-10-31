@@ -1,14 +1,7 @@
-// Starter page from Core. S1 replaces this file (docs/phase2/).
-import { StarterPage } from '@/components/shell/starter';
+import { requireUser } from '@/lib/session';
+import { PlansClient } from '@/components/s1/PlansClient';
 
-export default function Page() {
-  return (
-    <StarterPage
-      title="Plans"
-      slice="S1"
-      ids="CAT-3, CAT-4"
-      source="plans"
-      todo={["List with availability status"]}
-    />
-  );
+export default async function PlansPage() {
+  const user = await requireUser(['admin', 'staff'], '/app/plans');
+  return <PlansClient isAdmin={user.role === 'admin'} />;
 }

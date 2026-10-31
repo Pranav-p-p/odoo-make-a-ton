@@ -1,14 +1,7 @@
-// Starter page from Core. S1 replaces this file (docs/phase2/).
-import { StarterPage } from '@/components/shell/starter';
+import { requireUser } from '@/lib/session';
+import { TemplatesClient } from '@/components/s1/TemplatesClient';
 
-export default function Page() {
-  return (
-    <StarterPage
-      title="Quotation templates"
-      slice="S1"
-      ids="CAT-6"
-      source="quote_templates"
-      todo={["List of templates"]}
-    />
-  );
+export default async function TemplatesPage() {
+  const user = await requireUser(['admin', 'staff'], '/app/templates');
+  return <TemplatesClient isAdmin={user.role === 'admin'} />;
 }
